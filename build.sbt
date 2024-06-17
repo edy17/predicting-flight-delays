@@ -9,4 +9,5 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "3.4.1",
   "org.apache.spark" %% "spark-sql" % "3.4.1",
   "org.apache.spark" %% "spark-mllib" % "3.4.1",
-  "io.delta" %% "delta-core" % "2.4.0")
+  "io.delta" %% "delta-core" % "2.4.0",
+  "org.apache.hadoop" % "hadoop-aws" % "3.3.1")

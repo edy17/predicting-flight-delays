@@ -40,6 +40,11 @@ sbt clean package
     - [Apache Spark provider](https://airflow.apache.org/docs/apache-airflow-providers-apache-spark/stable/index.html#installation)
     - [Spark connection](https://airflow.apache.org/docs/apache-airflow-providers-apache-spark/stable/connections/spark-connect.html)
       configured with id `spark_cluster`
+    - [AWS provider](https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/index.html)
+    - [AWS connection](https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/connections/aws.html)
+      configured with id `aws_conn` and having permissions policies giving read and write access to a bucket named for example
+      `predicting-flight-delays` in this project
+
 
 Once all requirements are met, DAG can be run using:
 
