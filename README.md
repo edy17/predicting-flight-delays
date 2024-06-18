@@ -13,6 +13,10 @@ coastal, geophysical, and oceanic data.
 We use [Local Climatological Data](https://www1.ncdc.noaa.gov/pub/data/cdo/documentation/LCD_documentation.pdf)
 that provide a monthly synopses of climatic values for individual weather station.
 
+<p align="center">
+  <img src="docs/images/architecture.png" width="100%"/>
+</p>
+
 ### Data visualization
 
 Figures and PowerBI analysis report are available on the [dedicated web page](https://edy17.github.io/predicting-flight-delays/report.html).
