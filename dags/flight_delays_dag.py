@@ -52,6 +52,7 @@ with DAG("flight_delays_modeling_dag",
     bucket_name = "predicting-flight-delays"
     raw_data_location = f"s3a://{bucket_name}/task"
     lakehouse_location = f"s3a://{bucket_name}/spark-warehouse"
+    models_location = f"s3a://{bucket_name}/models"
     spark_jars_packages = "io.delta:delta-core_2.12:2.4.0,org.apache.hadoop:hadoop-aws:3.3.1"
     application_path = f"file://{os.environ['AIRFLOW_HOME']}/target/scala-2.12/predicting-flight-delays_2.12-0.1.0-SNAPSHOT.jar"
     spark_conn_id = "spark_cluster"
@@ -266,7 +267,8 @@ with DAG("flight_delays_modeling_dag",
         application_args=[f"{lakehouse_location}/train_delay",
                           f"{lakehouse_location}/test_delay",
                           f"{lakehouse_location}/{year_param}/train_roc",
-                          f"{lakehouse_location}/{year_param}/test_roc"],
+                          f"{lakehouse_location}/{year_param}/test_roc"
+                          f"{models_location}/{year_param}"],
         processed_year=current_year)
 
     get_current_year >> [download_flights, download_weather]

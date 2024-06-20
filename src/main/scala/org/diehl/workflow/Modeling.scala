@@ -4,7 +4,6 @@ import org.apache.spark.ml.classification.RandomForestClassifier
 import org.apache.spark.ml.functions.array_to_vector
 import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions.current_timestamp
 import org.apache.spark.sql.functions.lit
 import org.diehl.conf.Conf
 
@@ -16,9 +15,11 @@ object Modeling {
     val testDelayTableName = args(1)
     val trainRocTableName = args(2)
     val testRocTableName = args(3)
+    val modelsLocation = args(4)
 
     val conf = new Conf()
     val sparkSession = conf.getSparkSession
+    val log = conf.getLogger
     import sparkSession.implicits._
 
     val trainData = sparkSession.read.format("delta").load(trainDelayTableName)
@@ -31,15 +32,15 @@ object Modeling {
     val randomForest = new RandomForestClassifier()
       .setLabelCol("label")
       .setFeaturesCol("features")
-      .setNumTrees(300)
+      .setNumTrees(25)
+      .setMaxDepth(13)
 
     // Fit model
-    val datetime = current_timestamp()
     val model = randomForest.fit(trainData)
+    model.save(modelsLocation + "/rf_model")
     val trainAreaUnderROC = model.summary.asBinary.areaUnderROC
     val trainRoc = model.summary.asBinary.roc
       .withColumn("areaUnderROC", lit(trainAreaUnderROC).cast("double"))
-      .withColumn("datetime", datetime)
 
     // Make predictions
     val predictions = model.transform(testData).select($"prediction", $"label".cast("double"))
@@ -47,15 +48,14 @@ object Modeling {
     val testAreaUnderROC = metrics.areaUnderROC()
     val testRoc = metrics.roc.toDF("FPR", "TPR")
       .withColumn("areaUnderROC", lit(testAreaUnderROC).cast("double"))
-      .withColumn("datetime", datetime)
 
     createTableIfNotExists(trainRocTableName, sparkSession)
     createTableIfNotExists(testRocTableName, sparkSession)
     trainRoc.write.format("delta").mode("append").saveAsTable(s"delta.`$trainRocTableName`")
     testRoc.write.format("delta").mode("append").saveAsTable(s"delta.`$testRocTableName`")
 
-    sparkSession.sql(s"SELECT COUNT(*) FROM delta.`$testRocTableName`").show(false)
-    sparkSession.sql(s"SELECT * FROM delta.`$testRocTableName` LIMIT 5").show(false)
+    log.warn(s"Train areaUnderROC : $trainAreaUnderROC")
+    log.warn(s"Test areaUnderROC : $testAreaUnderROC")
   }
 
   private def createTableIfNotExists(tableName: String, spark: SparkSession): Unit = {
@@ -64,8 +64,7 @@ object Modeling {
         CREATE TABLE IF NOT EXISTS delta.`$tableName` (
           FPR double,
           TPR double,
-          areaUnderROC double,
-          datetime timestamp
+          areaUnderROC double
         ) USING DELTA
       """)
   }
