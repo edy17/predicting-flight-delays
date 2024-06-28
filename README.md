@@ -1,12 +1,11 @@
 # Predicting flight delays at scale
 
-The purpose of this project is to predict flight delays due to significant weather conditions from a big data processing application.
+The purpose of this project is to predict flight delays due to extreme weather conditions from a big data processing application.
 Apache Spark and Scala are used for data processing and modeling, Apache Airflow is used for workflow automation,
 Amazon S3 and Delta lake for storage, and PowerBI is used for visualization. Flight data are provided by the
 [Bureau of Transportation Statistics](https://www.transtats.bts.gov/DL_SelectFields.aspx?gnoyr_VQ=FGJ&QO_fu146_anzr=b0-gvzr)
 that compiles, analyzes and publishes information on transportation systems in the USA. In particular, they provide a
-[delay cause Definition](https://www.bts.gov/topics/airlines-and-airports/understanding-reporting-causes-flight-delays-and-cancellations),
-and [summary statistics on the weather's share](https://www.transtats.bts.gov/ot_delay/ot_delaycause1.asp?6B2r=G&20=E).
+[delay cause Definition](https://www.bts.gov/topics/airlines-and-airports/understanding-reporting-causes-flight-delays-and-cancellations).
 Weather data are provided by the [NCEI](https://www.ncei.noaa.gov/),
 a US government agency that manages one of the world's largest archives of atmospheric,
 coastal, geophysical, and oceanic data.
